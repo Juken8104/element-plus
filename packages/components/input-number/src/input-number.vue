@@ -64,6 +64,7 @@ import { isNil } from 'lodash-unified'
 import { ElInput } from '@element-plus/components/input'
 import { ElIcon } from '@element-plus/components/icon'
 import { RepeatClick as vRepeatClick } from '@element-plus/directives'
+import { ElMessage } from '@element-plus/components/message'
 import {
   useDisabled,
   useFormItem,
@@ -189,7 +190,15 @@ const verifyValue = (
   value: number | string | null | undefined,
   update?: boolean
 ): number | null | undefined => {
-  const { max, min, step, precision, stepStrictly, valueOnClear } = props
+  const {
+    max,
+    min,
+    step,
+    precision,
+    stepStrictly,
+    valueOnClear,
+    warningMessageLabel,
+  } = props
   let newVal = Number(value)
   if (isNil(value) || Number.isNaN(newVal)) {
     return null
@@ -197,6 +206,15 @@ const verifyValue = (
   if (value === '') {
     if (valueOnClear === null) {
       return null
+    } else {
+      if (warningMessageLabel) {
+        ElMessage({
+          showClose: true,
+          message: `${warningMessageLabel}范围为[${min},${max}]`,
+          type: 'warning',
+          duration: 10000,
+        })
+      }
     }
     newVal = isString(valueOnClear) ? { min, max }[valueOnClear] : valueOnClear
   }
@@ -209,6 +227,14 @@ const verifyValue = (
   if (newVal > max || newVal < min) {
     newVal = newVal > max ? max : min
     update && emit('update:modelValue', newVal)
+    if (warningMessageLabel) {
+      ElMessage({
+        showClose: true,
+        message: `${warningMessageLabel}范围为[${min},${max}]`,
+        type: 'warning',
+        duration: 10000,
+      })
+    }
   }
   return newVal
 }

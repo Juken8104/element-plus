@@ -19,6 +19,14 @@ export const inputNumberProps = buildProps({
     default: 1,
   },
   stepStrictly: Boolean,
+  /**
+   * author：Juken
+   * 添加信息提示el-message信息交互
+   */
+  warningMessageLabel: {
+    type: String,
+    default: undefined,
+  },
   max: {
     type: Number,
     default: Number.POSITIVE_INFINITY,

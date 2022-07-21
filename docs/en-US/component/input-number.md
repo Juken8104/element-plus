@@ -79,6 +79,14 @@ input-number/controlled
 
 :::
 
+## Warning Message Label
+
+:::demo Set `warning-message-label` to decide whether show the waring message.the message will show the range between `min` and `max`.
+
+input-number/warning-message-label
+
+:::
+
 ## Attributes
 
 | Attribute                     | Description                                      | Type                   | Accepted Values | Default     |
@@ -97,6 +105,7 @@ input-number/controlled
 | label                         | label text                                       | string                 | —               | —           |
 | placeholder                   | placeholder in input                             | string                 | -               | -           |
 | value-on-clear **(\> 2.2.0)** | value should be set when input box is cleared    | string / number / null | min/max         | -           |
+| warning-message-label         | show the message if you set `min` and `max`      | string                 | min/max         | -           |
 
 ## Events
 
