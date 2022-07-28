@@ -69,6 +69,14 @@ export const messageProps = buildProps({
     type: Number,
     default: 1,
   },
+  showCollapse: {
+    type: Boolean,
+    default: false,
+  },
+  collapseMessage: {
+    type: definePropType<string>([String]),
+    default: '',
+  },
 } as const)
 export type MessageProps = ExtractPropTypes<typeof messageProps>
 

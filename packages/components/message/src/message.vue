@@ -7,6 +7,7 @@
     <div
       v-show="visible"
       :id="id"
+      role="alert"
       :class="[
         ns.b(),
         { [ns.m(type)]: type && !icon },
@@ -15,29 +16,50 @@
         customClass,
       ]"
       :style="customStyle"
-      role="alert"
       @mouseenter="clearTimer"
       @mouseleave="startTimer"
     >
-      <el-badge
-        v-if="repeatNum > 1"
-        :value="repeatNum"
-        :type="badgeType"
-        :class="ns.e('badge')"
-      />
-      <el-icon v-if="iconComponent" :class="[ns.e('icon'), typeClass]">
-        <component :is="iconComponent" />
-      </el-icon>
-      <slot>
-        <p v-if="!dangerouslyUseHTMLString" :class="ns.e('content')">
-          {{ message }}
-        </p>
-        <!-- Caution here, message could've been compromised, never use user's input as message -->
-        <p v-else :class="ns.e('content')" v-html="message" />
-      </slot>
-      <el-icon v-if="showClose" :class="ns.e('closeBtn')" @click.stop="close">
-        <close />
-      </el-icon>
+      <div style="display: flex">
+        <el-badge
+          v-if="repeatNum > 1"
+          :value="repeatNum"
+          :type="badgeType"
+          :class="ns.e('badge')"
+        />
+        <el-icon v-if="iconComponent" :class="[ns.e('icon'), typeClass]">
+          <component :is="iconComponent" />
+        </el-icon>
+        <slot>
+          <p v-if="!dangerouslyUseHTMLString" :class="ns.e('content')">
+            {{ message }}
+            <span
+              v-show="showCollapse"
+              style="cursor: pointer"
+              @click.stop="collapse = !collapse"
+              >more</span
+            >
+          </p>
+          <!-- Caution here, message could've been compromised, never use user's input as message -->
+          <p v-else :class="ns.e('content')" v-html="message" />
+        </slot>
+        <el-icon v-if="showClose" :class="ns.e('closeBtn')" @click.stop="close">
+          <close />
+        </el-icon>
+      </div>
+      <div>
+        <el-collapse-transition>
+          <div
+            v-if="collapse"
+            :id="ns.b(`content-${id}`)"
+            :class="ns.be('item', 'wrap')"
+            role="tabpanel"
+            :aria-hidden="!collapse"
+            :aria-labelledby="ns.b(`head-${id}`)"
+          >
+            <div :class="ns.e('content')">{{ collapseMessage }}</div>
+          </div>
+        </el-collapse-transition>
+      </div>
     </div>
   </transition>
 </template>
@@ -48,6 +70,7 @@ import { TypeComponents, TypeComponentsMap } from '@element-plus/utils'
 import { EVENT_CODE } from '@element-plus/constants'
 import ElBadge from '@element-plus/components/badge'
 import { ElIcon } from '@element-plus/components/icon'
+import ElCollapseTransition from '@element-plus/components/collapse-transition'
 
 import { useNamespace } from '@element-plus/hooks'
 import { messageEmits, messageProps } from './message'
@@ -61,6 +84,7 @@ export default defineComponent({
   components: {
     ElBadge,
     ElIcon,
+    ElCollapseTransition,
     ...TypeComponents,
   },
 
@@ -68,6 +92,7 @@ export default defineComponent({
   emits: messageEmits,
 
   setup(props) {
+    const collapse = ref(false)
     const ns = useNamespace('message')
     const visible = ref(false)
     const badgeType = ref<BadgeProps['type']>(
@@ -142,6 +167,7 @@ export default defineComponent({
       close,
       clearTimer,
       startTimer,
+      collapse,
     }
   },
 })
